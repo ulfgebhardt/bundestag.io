@@ -184,6 +184,11 @@ const logFinished = () => {
   cronIsRunning = false;
 };
 
+const logFatalError = (error) => {
+  console.log(error);
+  cronIsRunning = false;
+};
+
 console.log('### Waiting for Cronjob');
 const cronTask = async () => {
   if (!cronIsRunning) {
@@ -193,24 +198,27 @@ const cronTask = async () => {
     // get old Scrape Data for cache
     pastScrapeData = await Procedure.find({}, { procedureId: 1, updatedAt: 1, currentStatus: 1 });
     // Do the scrape
-    await scraper.scrape({
-      // settings
-      browserStackSize: () => 7,
-      selectOperationTypes: () => ['6'],
-      // log
-      logStartLinkProgress,
-      logUpdateLinkProgress,
-      logStopLinkProgress,
-      logStartDataProgress,
-      logUpdateDataProgress,
-      logStopDataProgress,
-      logError,
-      logFinished,
-      // data
-      outScraperData: saveProcedure,
-      // cache(link skip logic)
-      doScrape,
-    });
+    await scraper
+      .scrape({
+        // settings
+        browserStackSize: () => 7,
+        selectOperationTypes: () => ['6'],
+        // log
+        logStartLinkProgress,
+        logUpdateLinkProgress,
+        logStopLinkProgress,
+        logStartDataProgress,
+        logUpdateDataProgress,
+        logStopDataProgress,
+        logError,
+        logFatalError,
+        logFinished,
+        // data
+        outScraperData: saveProcedure,
+        // cache(link skip logic)
+        doScrape,
+      })
+      .catch(error => console.log(error));
   }
 };
 
