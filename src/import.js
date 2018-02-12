@@ -69,7 +69,7 @@ const saveProcedure = async (procedureId, procedureData) => {
     euDocNr: procedureData.VORGANG.EU_DOK_NR || undefined,
     abstract: procedureData.VORGANG.ABSTRAKT || undefined,
     promulgation: ensureArray(procedureData.VORGANG.VERKUENDUNG),
-    legalValidity: procedureData.VORGANG.INKRAFTTRETEN || undefined,
+    legalValidity: ensureArray(procedureData.VORGANG.INKRAFTTRETEN),
     tags: ensureArray(procedureData.VORGANG.SCHLAGWORT),
     history,
   };
