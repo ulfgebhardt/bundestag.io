@@ -48,7 +48,8 @@ const outScraperData = async ({ procedureData }) => {
     return flow;
   });
 
-  /* let approvalRequire  if (procedureData.VORGANG.ZUSTIMMUNGSBEDUERFTIGKEIT) {
+  /* let approvalRequired;
+  if (procedureData.VORGANG.ZUSTIMMUNGSBEDUERFTIGKEIT) {
     if (!_.isArray(procedureData.VORGANG.ZUSTIMMUNGSBEDUERFTIGKEIT)) {
       approvalRequired = [procedureData.VORGANG.ZUSTIMMUNGSBEDUERFTIGKEIT];
     } else {
@@ -202,7 +203,7 @@ const cronTask = async () => {
         // settings
         browserStackSize: () => 7,
         // selectOperationTypes: () => ['100'],
-        selectPeriod: () => '19',
+        // selectPeriod: () => '19',
         // log
         logStartLinkProgress,
         logUpdateLinkProgress,
@@ -217,7 +218,8 @@ const cronTask = async () => {
         outScraperData,
         // cache(link skip logic)
         doScrape,
-            .catch(error => console.log(error));
+      })
+      .catch(error => console.log(error));
   }
 };
 
