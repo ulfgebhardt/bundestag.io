@@ -48,8 +48,7 @@ const outScraperData = async ({ procedureData }) => {
     return flow;
   });
 
-  /* let approvalRequired;
-  if (procedureData.VORGANG.ZUSTIMMUNGSBEDUERFTIGKEIT) {
+  /* let approvalRequire  if (procedureData.VORGANG.ZUSTIMMUNGSBEDUERFTIGKEIT) {
     if (!_.isArray(procedureData.VORGANG.ZUSTIMMUNGSBEDUERFTIGKEIT)) {
       approvalRequired = [procedureData.VORGANG.ZUSTIMMUNGSBEDUERFTIGKEIT];
     } else {
@@ -170,9 +169,9 @@ const logStopDataProgress = async () => {
   barData.stop();
 };
 
-const logError = ({ error }) => {
+/* const logError = ({ error }) => {
   console.log(error);
-};
+}; */
 // ^ TODO REMOVE
 
 const logFinished = () => {
@@ -184,8 +183,8 @@ const logFinished = () => {
   cronIsRunning = false;
 };
 
-const logFatalError = ({ error }) => {
-  console.log(error);
+const logFatalError = (/* { error } */) => {
+  // console.log(error);
   cronIsRunning = false;
 };
 
@@ -202,7 +201,8 @@ const cronTask = async () => {
       .scrape({
         // settings
         browserStackSize: () => 7,
-        selectOperationTypes: () => ['6'],
+        // selectOperationTypes: () => ['100'],
+        selectPeriod: () => '19',
         // log
         logStartLinkProgress,
         logUpdateLinkProgress,
@@ -210,15 +210,14 @@ const cronTask = async () => {
         logStartDataProgress,
         logUpdateDataProgress,
         logStopDataProgress,
-        logError,
+        // logError,
         logFatalError,
         logFinished,
         // data
         outScraperData,
         // cache(link skip logic)
         doScrape,
-      })
-      .catch(error => console.log(error));
+            .catch(error => console.log(error));
   }
 };
 
