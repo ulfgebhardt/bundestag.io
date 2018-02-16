@@ -28,7 +28,7 @@ const ensureArray = (element) => {
   return null;
 };
 
-const saveProcedure = async (procedureId, procedureData) => {
+const outScraperData = async ({ procedureData }) => {
   const process = _.isArray(procedureData.VORGANGSABLAUF.VORGANGSPOSITION)
     ? procedureData.VORGANGSABLAUF.VORGANGSPOSITION
     : [procedureData.VORGANGSABLAUF.VORGANGSPOSITION];
@@ -96,7 +96,7 @@ const saveProcedure = async (procedureId, procedureData) => {
   );
 };
 
-const doScrape = (data) => {
+const doScrape = ({ data }) => {
   const parts = data.date.match(/(\d+)/g);
   const dipDate = new Date(Date.UTC(parts[2], parts[1] - 1, parts[0]));
 
@@ -147,14 +147,14 @@ const barLink = new Progress.Bar(
   Progress.Presets.shades_classic,
 );
 
-const logStartLinkProgress = async (sum, current) => {
+const logStartLinkProgress = async ({ sum, value }) => {
   console.log('Eintragslinks sammeln');
 
-  barLink.start(sum, current);
+  barLink.start(sum, value);
 };
 
-const logUpdateLinkProgress = async (current) => {
-  barLink.update(current);
+const logUpdateLinkProgress = async ({ value }) => {
+  barLink.update(value);
 };
 
 const logStopLinkProgress = async () => {
@@ -164,27 +164,27 @@ const logStopLinkProgress = async () => {
 const barData = new Progress.Bar(
   {
     format:
-      '[{bar}] {percentage}% | ETA: {eta_formatted} | duration: {duration_formatted} | {value}/{total} | {errorCounter}',
+      '[{bar}] {percentage}% | ETA: {eta_formatted} | duration: {duration_formatted} | {value}/{total} | {retries}/{maxRetries}',
   },
   Progress.Presets.shades_classic,
 );
 
-const logStartDataProgress = async (sum, errorCounter) => {
+const logStartDataProgress = async ({ sum, retries, maxRetries }) => {
   console.log('Einträge downloaden');
-  barData.start(sum, 0, errorCounter);
+  barData.start(sum, 0, { retries, maxRetries });
 };
 
-const logUpdateDataProgress = async (current, errorCounter) => {
-  barData.update(current, errorCounter);
+const logUpdateDataProgress = async ({ value, retries, maxRetries }) => {
+  barData.update(value, { retries, maxRetries });
 };
 
 const logStopDataProgress = async () => {
   barData.stop();
 };
 
-const logError = (error) => {
+/* const logError = ({ error }) => {
   console.log(error);
-};
+}; */
 // ^ TODO REMOVE
 
 const logFinished = () => {
@@ -193,6 +193,11 @@ const logFinished = () => {
   const difference = new Date(elapsed);
   const diffMins = difference.getMinutes();
   console.log(`### Finish Cronjob! Time: ${diffMins} min`);
+  cronIsRunning = false;
+};
+
+const logFatalError = (/* { error } */) => {
+  // console.log(error);
   cronIsRunning = false;
 };
 
@@ -205,24 +210,28 @@ const cronTask = async () => {
     // get old Scrape Data for cache
     pastScrapeData = await Procedure.find({}, { procedureId: 1, updatedAt: 1, currentStatus: 1 });
     // Do the scrape
-    await scraper.scrape({
-      // settings
-      browserStackSize: () => 7,
-      selectOperationTypes: () => ['6'],
-      // log
-      logStartLinkProgress,
-      logUpdateLinkProgress,
-      logStopLinkProgress,
-      logStartDataProgress,
-      logUpdateDataProgress,
-      logStopDataProgress,
-      logError,
-      logFinished,
-      // data
-      outScraperData: saveProcedure,
-      // cache(link skip logic)
-      doScrape,
-    });
+    await scraper
+      .scrape({
+        // settings
+        browserStackSize: () => 7,
+        // selectOperationTypes: () => ['100'],
+        // selectPeriod: () => '19',
+        // log
+        logStartLinkProgress,
+        logUpdateLinkProgress,
+        logStopLinkProgress,
+        logStartDataProgress,
+        logUpdateDataProgress,
+        logStopDataProgress,
+        // logError,
+        logFatalError,
+        logFinished,
+        // data
+        outScraperData,
+        // cache(link skip logic)
+        doScrape,
+      })
+      .catch(error => console.log(error));
   }
 };
 
