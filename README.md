@@ -36,7 +36,7 @@ Change .env if necessary.
 
 ### Compile and start
 ```
-yarn ~~start~~ dev
+yarn run dev
 ```
 
 ### Import Data via Scraper
