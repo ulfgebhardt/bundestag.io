@@ -8,7 +8,7 @@ export default {
     WEBHOOKS: {
       UPDATE_PROCEDURES:
         process.env.DEMOCRACY_WEBHOOKS_UPDATE_PROCEDURES ||
-        "http://democracy/webhooks/bundestagio/updateProcedures"
+        "http://localhost:3000/webhooks/bundestagio/updateProcedures"
     }
   },
   ELASTICSEARCH_URL: process.env.ELASTICSEARCH_URL || "elasticsearch",
