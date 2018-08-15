@@ -38,9 +38,10 @@ app.prepare().then(async () => {
   });
 
   // Apollo Engine
-  if (process.env.ENGINE_API_KEY) {
+  if (constants.ENGINE_API_KEY) {
     const engine = new Engine({
-      engineConfig: { apiKey: process.env.ENGINE_API_KEY }
+      engineConfig: { apiKey: constants.ENGINE_API_KEY },
+      graphqlPort: constants.PORT
     });
     engine.start();
     server.use(engine.expressMiddleware());

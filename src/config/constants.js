@@ -11,6 +11,7 @@ export default {
         "http://democracy/webhooks/bundestagio/updateProcedures"
     }
   },
+  ENGINE_API_KEY: process.env.ENGINE_API_KEY || null,
   ELASTICSEARCH_URL: process.env.ELASTICSEARCH_URL || "elasticsearch",
   GRAPHIQL: process.env.GRAPHIQL || false,
   GRAPHIQL_PATH: "/graphiql",
