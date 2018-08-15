@@ -41,7 +41,10 @@ app.prepare().then(async () => {
   if (constants.ENGINE_API_KEY) {
     const engine = new Engine({
       engineConfig: { apiKey: constants.ENGINE_API_KEY },
-      graphqlPort: constants.PORT
+      graphqlPort: constants.PORT,
+      origin: {
+        requestTimeout: "2m"
+      }
     });
     engine.start();
     server.use(engine.expressMiddleware());
